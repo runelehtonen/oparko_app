@@ -1,0 +1,40 @@
+{
+  "name": "oparko_app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.21.0",
+    "@react-native-community/datetimepicker": "7.2.0",
+    "@react-native-community/masked-view": "^0.1.11",
+    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/native-stack": "^6.9.17",
+    "axios": "^1.6.2",
+    "expo": "~49.0.15",
+    "expo-app-auth": "~11.1.0",
+    "expo-app-loading": "^2.1.1",
+    "expo-constants": "~14.4.2",
+    "expo-google-app-auth": "~8.3.0",
+    "expo-google-sign-in": "^11.0.0",
+    "expo-splash-screen": "~0.20.5",
+    "expo-status-bar": "~1.6.0",
+    "formik": "^2.4.5",
+    "react": "18.2.0",
+    "react-native": "0.72.6",
+    "react-native-gesture-handler": "~2.12.0",
+    "react-native-modal-datetime-picker": "^17.1.0",
+    "react-native-reanimated": "~3.3.0",
+    "react-native-safe-area-context": "4.6.3",
+    "react-native-screens": "~3.22.0",
+    "react-native-svg": "^14.1.0",
+    "styled-components": "^6.1.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "private": true
+}
