@@ -26,12 +26,12 @@ const RootStack = () => {
       {({ storedCredentials }) => (
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Start"
+            initialRouteName="Onboarding"
             screenOptions={{
               headerStyle: {
                 backgroundColor: 'transparent',
               },
-              headerTintColor: 'tetiary',
+              headerTintColor: tertiary,
               headerTransparent: true,
               headerTitle: '',
               headerLeftContainerStyle: {

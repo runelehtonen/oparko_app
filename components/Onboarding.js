@@ -1,15 +1,20 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, Animated } from 'react-native';
-
+import { View, Text, StyleSheet, FlatList, Animated, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import OnboardingItem from '../components/OnboardingItem';
 import SlideIndicator from '../components/SlideIndicator';
 import OnboardingButton from '../components/OnboardingButton';
 import slides from '../slides';
+import { Colors } from './../components/styles';
+
+// Colors
+const { lightGray } = Colors;
 
 export default Onboarding = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const slidesRef = useRef(null);
+  const navigation = useNavigation();
 
   const viewableItemsChanged = useRef(({ viewableItems }) => {
     setCurrentIndex(viewableItems[0].index);
@@ -22,7 +27,20 @@ export default Onboarding = () => {
       slidesRef.current.scrollToIndex({ index: currentIndex + 1 });
     } else {
       console.log('Last item');
+      navigation.navigate('Start');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Start' }],
+      });
     }
+  };
+
+  const skipOnboarding = () => {
+    navigation.navigate('Start');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Start' }],
+    });
   };
 
   return (
@@ -46,6 +64,9 @@ export default Onboarding = () => {
         />
       </View>
       <SlideIndicator data={slides} scrollX={scrollX} />
+      <TouchableOpacity style={styles.skipButton} onPress={skipOnboarding}>
+        <Text style={styles.skipButtonText}>Skip</Text>
+      </TouchableOpacity>
       <OnboardingButton scrollTo={scrollTo} percentage={(currentIndex + 1) * (100 / slides.length)} />
     </View>
   );
@@ -56,5 +77,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  skipButton: {
+    position: 'absolute',
+    bottom: 65,
+    right: 60,
+  },
+  skipButtonText: {
+    color: lightGray,
+    fontSize: 16,
   },
 });
