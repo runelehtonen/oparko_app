@@ -14,6 +14,10 @@ import Signup from './../screens/Signup';
 import Welcome from './../screens/Welcome';
 import Verification from '../screens/EmailVerification';
 import Onboarding from '../components/Onboarding';
+import BuyPermit from '../screens/BuyPermit';
+import Subscriptions from '../screens/Subscriptions';
+import Support from '../screens/Support';
+import Settings from '../screens/Settings';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +30,7 @@ const RootStack = () => {
       {({ storedCredentials }) => (
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Onboarding"
+            initialRouteName={storedCredentials ? 'Welcome' : 'Start'}
             screenOptions={{
               headerStyle: {
                 backgroundColor: 'transparent',
@@ -41,7 +45,11 @@ const RootStack = () => {
           >
             {storedCredentials ? (
               <>
-                <Stack.Screen options={{ headerTintColor: primary }} name="Welcome" component={Welcome} />
+                <Stack.Screen name="Welcome" component={Welcome} options={{ headerTintColor: primary }} />
+                <Stack.Screen name="BuyPermit" component={BuyPermit} />
+                <Stack.Screen name="Subscriptions" component={Subscriptions} />
+                <Stack.Screen name="Support" component={Support} />
+                <Stack.Screen name="Settings" component={Settings} />
               </>
             ) : (
               <>

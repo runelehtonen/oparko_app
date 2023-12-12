@@ -23,7 +23,7 @@ const { primary, secondary, tertiary, darkLight, brand, green, light, bg, red } 
 
 export const DefaultContainer = styled.View`
   flex: 1;
-  padding: 25px;
+  padding: 20px;
   padding-top: ${StatusBarHeight + 30}px;
   background-color: ${bg};
 `;

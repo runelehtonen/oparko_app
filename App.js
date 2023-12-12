@@ -14,18 +14,15 @@ import { CredentialsContext } from './components/CredentialsContext';
 
 export default function App() {
   const [appReady, setAppReady] = useState(false);
-  const [storedCredentials, setStoredCredentials] = useState('');
+  const [storedCredentials, setStoredCredentials] = useState(null);
 
   const checkLoginCredentials = async () => {
     try {
-      const result = await AsyncStorage.getItem('oparkoAppCredentials');
-      if (result !== null) {
-        setStoredCredentials(JSON.parse(result));
-      } else {
-        setStoredCredentials(null);
-      }
+      const result = await AsyncStorage.getItem('oparkoAppToken');
+      return result !== null;
     } catch (err) {
       console.error(err);
+      return false;
     }
   };
 
@@ -33,7 +30,17 @@ export default function App() {
     const init = async () => {
       try {
         await SplashScreen.preventAutoHideAsync();
-        await checkLoginCredentials();
+        const isLoggedIn = await checkLoginCredentials();
+
+        if (isLoggedIn) {
+          // User is already logged in, retrieve credentials and set them
+          const storedToken = await AsyncStorage.getItem('oparkoAppToken');
+          const storedUserString = await AsyncStorage.getItem('oparkoAppUser');
+          const storedUser = JSON.parse(storedUserString);
+
+          setStoredCredentials({ token: storedToken, userId: storedUser.userId });
+        }
+
         setAppReady(true);
         await SplashScreen.hideAsync();
       } catch (e) {

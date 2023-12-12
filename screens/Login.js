@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 
 // formik
@@ -50,18 +50,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // credentials context
 import { CredentialsContext } from './../components/CredentialsContext';
 
-const Login = ({ navigation }) => {
+import { useNavigation } from '@react-navigation/native';
+
+const Login = () => {
+  const navigation = useNavigation();
   const [hidePassword, setHidePassword] = useState(true);
   const [message, setMessage] = useState();
   const [messageType, setMessageType] = useState();
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // credentials context
   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
 
   const handleLogin = (credentials, setSubmitting) => {
     handleMessage(null);
+    setLoading(true);
+
     const url = 'http://192.168.0.64:3000/user/signin';
+
     axios
       .post(url, credentials)
       .then((response) => {
@@ -71,13 +77,24 @@ const Login = ({ navigation }) => {
         if (status !== 'SUCCESS') {
           handleMessage(message, status);
         } else {
-          persistLogin(data[0], message, status);
+          const { token, user } = data;
+
+          console.log('User Data:', data); // Log the entire user data
+
+          AsyncStorage.setItem('oparkoAppToken', token);
+          AsyncStorage.setItem('oparkoAppUser', JSON.stringify(user));
+
+          setStoredCredentials({ token, userId: user.userId }); // Set userId in credentials
+          navigation.navigate('Welcome');
         }
+
         setSubmitting(false);
+        setLoading(false);
       })
       .catch((error) => {
-        console.log(error.JSON());
+        console.log(error);
         setSubmitting(false);
+        setLoading(false);
         handleMessage('An error occurred. Check your network and try again');
       });
   };
@@ -175,7 +192,7 @@ const Login = ({ navigation }) => {
 
                   <MsgBox type={messageType}>{message}</MsgBox>
                   {!isSubmitting && (
-                    <StyledButton onPress={handleSubmit}>
+                    <StyledButton onPress={handleSubmit} disabled={loading}>
                       <ButtonText>Log ind</ButtonText>
                     </StyledButton>
                   )}
