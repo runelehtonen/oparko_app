@@ -78,10 +78,6 @@ const AccountSettings = () => {
     fetchUserInfo();
   }, [userId, token]);
 
-  useEffect(() => {
-    console.log('Updated UserInfo:', userInfo);
-  }, [userInfo]);
-
   const handleMessage = (message, type = 'FAILED') => {
     setMessage(message);
     setMessageType(type);
@@ -89,10 +85,8 @@ const AccountSettings = () => {
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    console.log('Selected Date:', currentDate); // Add this line
     setDate(currentDate);
     setDob(currentDate);
-    console.log('Updated Date:', currentDate); // Add this line
   };
 
   const showDatePicker = () => {
@@ -109,6 +103,32 @@ const AccountSettings = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleUpdate = async (values, setSubmitting) => {
+    try {
+      const response = await axios.put(`http://192.168.0.64:3000/user/update/${userId}`, values, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+
+      const result = response.data;
+
+      if (result.status === 'SUCCESS') {
+        console.log('User information updated successfully:', result.data);
+        setUserInfo(result.data); // Update local state with the updated user information
+        handleMessage(result.message, 'SUCCESS');
+      } else {
+        console.error('Failed to update user information:', result.message);
+        handleMessage(result.message);
+      }
+    } catch (error) {
+      console.error('Error updating user information:', error.message);
+      handleMessage('An error occurred while updating user information');
+    }
+
+    setSubmitting(false);
   };
 
   return (
@@ -130,7 +150,7 @@ const AccountSettings = () => {
         }}
         onSubmit={(values, { setSubmitting }) => {
           values = { ...values, dateOfBirth: dob };
-          if (values.email == '' || values.name == '' || values.dateOfBirth == '' || values.confirmPassword == '') {
+          if (values.email == '' || values.name == '' || values.dateOfBirth == '') {
             handleMessage('Udfyld venligst alle felter');
             setSubmitting(false);
           } else {
@@ -279,7 +299,6 @@ const AccountSettings = () => {
   );
 };
 const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, isDate, showDatePicker, ...props }) => {
-  console.log('Date Value:', props.value);
   return (
     <View>
       <LeftIconContainer>

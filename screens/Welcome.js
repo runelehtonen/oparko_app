@@ -63,9 +63,9 @@ const Welcome = () => {
       }
     };
 
-    // Fetch user information whenever userId or token changes
+    // Fetch user information whenever userId, token or userInfo changes
     fetchUserInfo();
-  }, [userId, token]);
+  }, [userId, token, userInfo]);
 
   return (
     <>
