@@ -30,7 +30,7 @@ const RootStack = () => {
       {({ storedCredentials }) => (
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName={storedCredentials ? 'Welcome' : 'Start'}
+            initialRouteName={storedCredentials ? 'Welcome' : 'Onboarding'}
             screenOptions={{
               headerStyle: {
                 backgroundColor: 'transparent',
