@@ -1,14 +1,36 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Switch } from 'react-native';
-import { Colors } from './../components/styles';
 import Slider from '@react-native-community/slider';
+import { Colors } from './../components/styles';
 
 // Colors
-const { primary, brand, tertiary } = Colors;
+const { primary, brand, tertiary, darkLight } = Colors;
 
 const NotificationSettings = () => {
-  const [receiveSMS, setReceiveSMS] = useState(false);
-  const [receiveNotifications, setReceiveNotifications] = useState(false);
+  const [receiveSMSActive, setReceiveSMSActive] = useState(false);
+  const [receiveNotificationsActive, setReceiveNotificationsActive] = useState(false);
+
+  const [receiveSMSExpiring, setReceiveSMSExpiring] = useState(false);
+  const [receiveNotificationsExpiring, setReceiveNotificationsExpiring] = useState(false);
+
+  const [receiveEmailReceipts, setReceiveEmailReceipts] = useState(false);
+
+  const [receiveNotificationsMarketing, setReceiveNotificationsMarketing] = useState(false);
+
+  const [activeParkingHours, setActiveParkingHours] = useState(15);
+  const [expiringSoonHours, setExpiringSoonHours] = useState(15);
+
+  const handleActiveParkingChange = (value) => {
+    setActiveParkingHours(Math.round(value) + 15);
+  };
+
+  const handleExpiringSoonChange = (value) => {
+    setExpiringSoonHours(Math.round(value) + 15);
+  };
+
+  const formatTime = (minutes) => {
+    return `${minutes} min`;
+  };
 
   return (
     <>
@@ -18,36 +40,42 @@ const NotificationSettings = () => {
         </View>
         <View style={styles.cardContent}>
           <Text style={styles.cardContentText}>
-            Modtag løbende notifikationer eller beskeder så længe parkering er aktiv
+            Modtag løbende påmindelser om din igangværende parkering på et selvvalgt tidsinterval.
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Slider
-              style={styles.slider}
-              minimumValue={0}
-              maximumValue={1}
-              minimumTrackTintColor="#025578"
-              maximumTrackTintColor="rgba(0, 0, 0, 0.1)"
-            />
-            <View style={styles.textContainer}>
-              <Text style={{ textAlign: 'right', color: '#000000' }}>60 min</Text>
-            </View>
+            {receiveSMSActive || receiveNotificationsActive ? (
+              <>
+                <Slider
+                  style={styles.slider}
+                  minimumValue={0}
+                  maximumValue={225}
+                  minimumTrackTintColor="#025578"
+                  maximumTrackTintColor="rgba(0, 0, 0, 0.1)"
+                  step={15}
+                  onValueChange={handleActiveParkingChange}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={{ textAlign: 'right', color: '#000000' }}>{formatTime(activeParkingHours)}</Text>
+                </View>
+              </>
+            ) : null}
           </View>
           <View style={styles.extraView}>
-            <Text style={{ marginLeft: 10, flex: 1 }}>Modtag SMS</Text>
+            <Text style={styles.extraViewText}>Modtag SMS</Text>
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveSMS}
-              onValueChange={() => setReceiveSMS(!receiveSMS)}
+              value={receiveSMSActive}
+              onValueChange={() => setReceiveSMSActive(!receiveSMSActive)}
             />
           </View>
           <View style={styles.extraView}>
-            <Text style={{ marginLeft: 10, flex: 1 }}>Push notifikationer</Text>
+            <Text style={styles.extraViewText}>Push notifikationer</Text>
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveNotifications}
-              onValueChange={() => setReceiveNotifications(!receiveNotifications)}
+              value={receiveNotificationsActive}
+              onValueChange={() => setReceiveNotificationsActive(!receiveNotificationsActive)}
             />
           </View>
         </View>
@@ -59,36 +87,86 @@ const NotificationSettings = () => {
         </View>
         <View style={styles.cardContent}>
           <Text style={styles.cardContentText}>
-            Modtag notifikationer eller beskeder når din parkering snart udløber
+            Undgå parkeringsafgifter fordi du ikke var tilbage i tide. Modtag en påmindelse i forvejen for udløb af din
+            parkering.
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Slider
-              style={styles.slider}
-              minimumValue={0}
-              maximumValue={1}
-              minimumTrackTintColor="#025578"
-              maximumTrackTintColor="rgba(0, 0, 0, 0.1)"
-            />
-            <View style={styles.textContainer}>
-              <Text style={{ textAlign: 'right', color: '#000000' }}>35 min</Text>
-            </View>
+            {receiveSMSExpiring || receiveNotificationsExpiring ? (
+              <>
+                <Slider
+                  style={styles.slider}
+                  minimumValue={0}
+                  maximumValue={225}
+                  minimumTrackTintColor="#025578"
+                  maximumTrackTintColor="rgba(0, 0, 0, 0.1)"
+                  step={15}
+                  onValueChange={handleExpiringSoonChange}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={{ textAlign: 'right', color: '#000000' }}>{formatTime(expiringSoonHours)}</Text>
+                </View>
+              </>
+            ) : null}
           </View>
           <View style={styles.extraView}>
-            <Text style={{ marginLeft: 10, flex: 1 }}>Modtag SMS</Text>
+            <Text style={styles.extraViewText}>Modtag SMS</Text>
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveSMS}
-              onValueChange={() => setReceiveSMS(!receiveSMS)}
+              value={receiveSMSExpiring}
+              onValueChange={() => setReceiveSMSExpiring(!receiveSMSExpiring)}
             />
           </View>
           <View style={styles.extraView}>
-            <Text style={{ marginLeft: 10, flex: 1 }}>Push notifikationer</Text>
+            <Text style={styles.extraViewText}>Push notifikationer</Text>
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveNotifications}
-              onValueChange={() => setReceiveNotifications(!receiveNotifications)}
+              value={receiveNotificationsExpiring}
+              onValueChange={() => setReceiveNotificationsExpiring(!receiveNotificationsExpiring)}
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* New Card for "Kvitteringer" */}
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardHeaderText}>Kvitteringer</Text>
+        </View>
+        <View style={styles.cardContent}>
+          <Text style={styles.cardContentText}>
+            Modtag kvitteringer på email, når du køber en parkeringstilladelse.
+          </Text>
+          <View style={styles.extraView}>
+            <Text style={styles.extraViewText}>Email</Text>
+            <Switch
+              thumbColor={Colors.primary}
+              trackColor={{ false: '#767577', true: '#025578' }}
+              value={receiveEmailReceipts}
+              onValueChange={() => setReceiveEmailReceipts(!receiveEmailReceipts)}
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* Marketingkommunikation */}
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardHeaderText}>Marketingkommunikation</Text>
+        </View>
+        <View style={styles.cardContent}>
+          <Text style={styles.cardContentText}>
+            Vil du være den første til at få besked om ændringer, nye services, tids- og pengesparende tips, eller bare
+            modtage specielle tilbud?{' '}
+          </Text>
+          <View style={styles.extraView}>
+            <Text style={styles.extraViewText}>Email, SMS, Push notifikationer</Text>
+            <Switch
+              thumbColor={Colors.primary}
+              trackColor={{ false: '#767577', true: '#025578' }}
+              value={receiveNotificationsMarketing}
+              onValueChange={() => setReceiveNotificationsMarketing(!receiveNotificationsMarketing)}
             />
           </View>
         </View>
@@ -149,6 +227,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 6,
+  },
+  extraViewText: {
+    fontSize: 13,
+    color: darkLight,
   },
 });
