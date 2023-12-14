@@ -1,11 +1,23 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  ActivityIndicator,
+  TouchableWithoutFeedback,
+  Alert,
+} from 'react-native';
 import { Formik } from 'formik';
 import { Octicons, Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CredentialsContext } from './../components/CredentialsContext';
+import { useNavigation } from '@react-navigation/native';
+import KeyboardAvoidingWrapper from './KeyboardAvoidingWrapper';
+
 import {
   Colors,
   StyledFormArea,
@@ -19,9 +31,10 @@ import {
   LeftIcon,
   StyledInputLabel,
   StyledTextInput,
+  RightIcon,
 } from './../components/styles';
 
-const { brand, darkLight, primary } = Colors;
+const { brand, darkLight, primary, lightGray } = Colors;
 
 const AccountSettings = () => {
   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
@@ -35,6 +48,25 @@ const AccountSettings = () => {
 
   const [message, setMessage] = useState();
   const [messageType, setMessageType] = useState();
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [hideCurrentPassword, setHideCurrentPassword] = useState(true);
+  const [hideNewPassword, setHideNewPassword] = useState(true);
+  const [hideConfirmNewPassword, setHideConfirmNewPassword] = useState(true);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
+  const navigation = useNavigation();
+
+  const togglePasswordModal = () => {
+    setShowPasswordModal(!showPasswordModal);
+  };
+
+  // Close the modal when clicking outside
+  const handleBackgroundClick = () => {
+    setShowPasswordModal(false);
+  };
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -131,12 +163,197 @@ const AccountSettings = () => {
     setSubmitting(false);
   };
 
+  const handleDeleteUser = () => {
+    // Display an alert for confirmation
+    Alert.alert(
+      'Are you sure?',
+      'This action will permanently delete your user. Do you want to proceed?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: () => confirmDeleteUser(),
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+
+  const confirmDeleteUser = async () => {
+    try {
+      const response = await axios.delete(`http://192.168.0.64:3000/user/delete/${userId}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+
+      const result = response.data;
+
+      if (result.status === 'SUCCESS') {
+        console.log('User deleted successfully:', result.message);
+
+        // Log out the user
+        await clearLogin();
+
+        // Navigate to the start of the application (adjust the navigation logic as needed)
+        navigation.navigate('Start'); // replace 'Start' with the actual starting point of your app
+      } else {
+        console.error('Failed to delete user:', result.message);
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error.message);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      const response = await axios.post(
+        'http://192.168.0.64:3000/user/change-password',
+        {
+          currentPassword,
+          newPassword,
+        },
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+
+      const result = response.data;
+
+      if (result.status === 'SUCCESS') {
+        console.log('Password changed successfully:', result.message);
+        setMessage(result.message);
+        setMessageType('SUCCESS');
+
+        // Clear password fields
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+
+        // Close the modal after 1 second
+        setTimeout(() => {
+          setShowPasswordModal(false);
+        }, 1000);
+      } else {
+        console.error('Failed to change password:', result.message);
+        setMessage(result.message);
+        setMessageType('FAILED');
+      }
+    } catch (error) {
+      console.error('Error changing password:', error.message);
+      setMessage('An error occurred while changing the password');
+      setMessageType('FAILED');
+    }
+  };
+
+  useEffect(() => {
+    let timeout;
+
+    if (message && messageType) {
+      // Auto-hide message after 5 seconds
+      timeout = setTimeout(() => {
+        setMessage(null);
+        setMessageType(null);
+      }, 5000);
+    }
+
+    // Clear the timeout if the component unmounts or a new message arrives
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [message, messageType]);
+
   return (
     <>
       <View style={styles.titleContainer}>
         <Text style={styles.subTitle}>Indstillinger</Text>
-        <Text style={styles.changePasswordLink}>Skift adgangskode</Text>
+        <TouchableOpacity onPress={togglePasswordModal}>
+          <Text style={styles.changePasswordLink}>Skift adgangskode</Text>
+        </TouchableOpacity>
       </View>
+
+      <Modal transparent={true} animationType="slide" visible={showPasswordModal} onRequestClose={togglePasswordModal}>
+        <KeyboardAvoidingWrapper>
+          <TouchableWithoutFeedback onPress={handleBackgroundClick}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Skift adgangskode</Text>
+
+                <Formik
+                  initialValues={{
+                    currentPassword: '',
+                    newPassword: '',
+                    confirmNewPassword: '',
+                  }}
+                  onSubmit={(values) => {
+                    setCurrentPassword(values.currentPassword);
+                    setNewPassword(values.newPassword);
+                    setConfirmNewPassword(values.confirmNewPassword);
+                    handleChangePassword();
+                  }}
+                >
+                  {({ handleChange, handleBlur, handleSubmit, values }) => (
+                    <View>
+                      <MyTextInput
+                        label="Nuværende adgangskode"
+                        icon="lock"
+                        placeholder="********"
+                        placeholderTextColor={lightGray}
+                        onChangeText={handleChange('currentPassword')}
+                        onBlur={handleBlur('currentPassword')}
+                        value={values.currentPassword}
+                        secureTextEntry={hideCurrentPassword}
+                        isPassword={true}
+                        hidePassword={hideCurrentPassword}
+                        setHidePassword={setHideCurrentPassword}
+                      />
+                      <MyTextInput
+                        label="Ny adgangskode"
+                        icon="lock"
+                        placeholder="********"
+                        placeholderTextColor={lightGray}
+                        onChangeText={handleChange('newPassword')}
+                        onBlur={handleBlur('newPassword')}
+                        value={values.newPassword}
+                        secureTextEntry={hideNewPassword}
+                        isPassword={true}
+                        hidePassword={hideNewPassword}
+                        setHidePassword={setHideNewPassword}
+                      />
+                      <MyTextInput
+                        label="Bekræft ny adgangskode"
+                        icon="lock"
+                        placeholder="********"
+                        placeholderTextColor={lightGray}
+                        onChangeText={handleChange('confirmNewPassword')}
+                        onBlur={handleBlur('confirmNewPassword')}
+                        value={values.confirmNewPassword}
+                        secureTextEntry={hideConfirmNewPassword}
+                        isPassword={true}
+                        hidePassword={hideConfirmNewPassword}
+                        setHidePassword={setHideConfirmNewPassword}
+                      />
+                      <MsgBox type={messageType}>{message}</MsgBox>
+                      <StyledButton onPress={handleSubmit}>
+                        <ButtonText>Skift adgangskode</ButtonText>
+                      </StyledButton>
+                      <Text style={styles.cancelText} onPress={togglePasswordModal}>
+                        Annuller
+                      </Text>
+                    </View>
+                  )}
+                </Formik>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingWrapper>
+      </Modal>
+
       <Formik
         key={JSON.stringify(userInfo)}
         initialValues={{
@@ -147,6 +364,7 @@ const AccountSettings = () => {
           zipCode: userInfo.zipCode || '',
           city: userInfo.city || '',
           phone: userInfo.phone || '',
+          regNu: userInfo.regNu || '',
         }}
         onSubmit={(values, { setSubmitting }) => {
           values = { ...values, dateOfBirth: dob };
@@ -245,7 +463,7 @@ const AccountSettings = () => {
             <MyTextInput
               label="Telefonnummer"
               icon="device-mobile"
-              placeholder="+45 12 34 56 78"
+              placeholder="12 34 56 78"
               onChangeText={handleChange('phone')}
               onBlur={handleBlur('phone')}
               value={values.phone}
@@ -266,15 +484,13 @@ const AccountSettings = () => {
 
             <MsgBox type={messageType}>{message}</MsgBox>
 
-            {!isSubmitting && (
-              <StyledButton onPress={handleSubmit}>
-                <ButtonText>Opdater indstillinger</ButtonText>
-              </StyledButton>
-            )}
-
-            {isSubmitting && (
+            {isSubmitting ? (
               <StyledButton disabled={true}>
                 <ActivityIndicator size="large" color={Colors.primary} />
+              </StyledButton>
+            ) : (
+              <StyledButton onPress={handleSubmit}>
+                <ButtonText>Opdater indstillinger</ButtonText>
               </StyledButton>
             )}
             <View style={styles.actions}>
@@ -285,9 +501,9 @@ const AccountSettings = () => {
                 </View>
               </TouchableOpacity>
               <View style={styles.line} />
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleDeleteUser}>
                 <View style={styles.extraView}>
-                  <ExtraText>Slet bruger </ExtraText>
+                  <ExtraText>Slet bruger</ExtraText>
                   <Ionicons name="ios-arrow-forward" size={20} color={darkLight} />
                 </View>
               </TouchableOpacity>
@@ -427,6 +643,33 @@ const styles = StyleSheet.create({
   },
   activeTabText: {
     color: brand,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '400',
+    marginBottom: 10,
+    color: brand,
+  },
+  cancelText: {
+    color: darkLight,
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 
