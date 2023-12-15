@@ -22,16 +22,16 @@ const Welcome = () => {
   const { userId, token } = storedCredentials;
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState(null);
+  const [avatar, setAvatar] = useState(null);
 
-  const clearLogin = async () => {
+  const retrieveAvatar = async () => {
     try {
-      await AsyncStorage.removeItem('oparkoAppToken');
-      await AsyncStorage.removeItem('oparkoAppUser');
-      // Add any other items you want to remove
-
-      setStoredCredentials(null);
+      const storedAvatar = await AsyncStorage.getItem('avatar');
+      if (storedAvatar) {
+        setAvatar(storedAvatar);
+      }
     } catch (error) {
-      console.log(error);
+      console.error('Error retrieving avatar from AsyncStorage:', error);
     }
   };
 
@@ -65,6 +65,7 @@ const Welcome = () => {
 
     // Fetch user information whenever userId, token or userInfo changes
     fetchUserInfo();
+    retrieveAvatar();
   }, [userId, token, userInfo]);
 
   return (
@@ -78,14 +79,15 @@ const Welcome = () => {
             <Text style={userInfo ? styles['SubTitle.email'] : styles.SubTitle}>{userInfo?.email || 'Loading...'}</Text>
           </View>
           <TouchableOpacity onPress={goToSettings} style={styles.avatarContainer}>
-            <Octicons style={styles.Avatar} name="feed-person" size={40} color={brand} />
+            {avatar ? (
+              <Image source={{ uri: avatar }} style={styles.avatarImage} />
+            ) : (
+              <Octicons style={styles.Avatar} name="feed-person" size={40} color={brand} />
+            )}
             <FontAwesome5 style={styles.cogWheel} name="cog" size={20} color={brand} />
           </TouchableOpacity>
         </View>
         <MenuCards />
-        <StyledButton onPress={clearLogin}>
-          <ButtonText>Log ud</ButtonText>
-        </StyledButton>
       </DefaultContainer>
     </>
   );
@@ -104,6 +106,11 @@ const styles = StyleSheet.create({
   avatarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  avatarImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 999,
   },
   cogWheel: {
     position: 'absolute',

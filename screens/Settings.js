@@ -1,7 +1,9 @@
-import React, { useState, useContext } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Modal, ActivityIndicator, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Octicons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Colors,
   StyledContainer,
@@ -20,14 +22,84 @@ const { brand, darkLight, primary } = Colors;
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const [avatar, setAvatar] = useState(null);
+
+  useEffect(() => {
+    // Retrieve avatar from AsyncStorage on component mount
+    retrieveAvatar();
+    // Request permission to access the camera roll
+    (async () => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        console.error('Permission to access camera roll denied');
+      }
+    })();
+  }, []);
+
+  // Function to open the image picker
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
+
+    // Check if the image selection was canceled
+    if (result.canceled !== true) {
+      // Use the "assets" array to access selected assets
+      const selectedImage = result.assets && result.assets.length > 0 ? result.assets[0] : null;
+
+      if (selectedImage) {
+        setAvatar(selectedImage.uri);
+        // Save the avatar URI to AsyncStorage
+        saveAvatar(selectedImage.uri);
+      }
+    }
+  };
+
+  // Function to save avatar URI to AsyncStorage
+  const saveAvatar = async (uri) => {
+    try {
+      await AsyncStorage.setItem('avatar', uri);
+
+      // Fetch existing user information from AsyncStorage
+      const storedUser = await AsyncStorage.getItem('oparkoAppUser');
+      const user = JSON.parse(storedUser);
+
+      // Update user information with the new avatar URI
+      const updatedUser = { ...user, avatar: uri };
+      await AsyncStorage.setItem('oparkoAppUser', JSON.stringify(updatedUser));
+
+      setAvatar(uri);
+    } catch (error) {
+      console.error('Error saving avatar to AsyncStorage:', error);
+    }
+  };
+
+  // Function to retrieve avatar URI from AsyncStorage
+  const retrieveAvatar = async () => {
+    try {
+      const storedAvatar = await AsyncStorage.getItem('avatar');
+      if (storedAvatar) {
+        setAvatar(storedAvatar);
+      }
+    } catch (error) {
+      console.error('Error retrieving avatar from AsyncStorage:', error);
+    }
+  };
 
   return (
     <KeyboardAvoidingWrapper>
       <StyledContainer>
         <StatusBar style="dark" />
         <View style={styles.innerContainer}>
-          <TouchableOpacity style={styles.avatarContainer}>
-            <Octicons style={styles.Avatar} name="feed-person" size={85} color={brand} />
+          <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
+            {avatar ? (
+              <Image source={{ uri: avatar }} style={styles.avatarImage} />
+            ) : (
+              <Octicons style={styles.Avatar} name="feed-person" size={85} color={brand} />
+            )}
             <View style={styles.circleWrapper}>
               <View style={styles.circleBackground}>
                 <FontAwesome5 style={styles.pen} name="pen" size={16} color={brand} />
@@ -93,6 +165,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 35,
+  },
+  avatarImage: {
+    width: 85,
+    height: 85,
+    borderRadius: 999,
   },
   pen: {
     position: 'absolute',
