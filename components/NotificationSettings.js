@@ -1,31 +1,109 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, Text, Switch } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Colors } from './../components/styles';
+import { CredentialsContext } from './../components/CredentialsContext'; // Import the authentication context
 
 // Colors
 const { primary, brand, tertiary, darkLight } = Colors;
 
 const NotificationSettings = () => {
-  const [receiveSMSActive, setReceiveSMSActive] = useState(false);
-  const [receiveNotificationsActive, setReceiveNotificationsActive] = useState(false);
+  const { storedCredentials } = useContext(CredentialsContext);
+  const { userId, token } = storedCredentials;
 
-  const [receiveSMSExpiring, setReceiveSMSExpiring] = useState(false);
-  const [receiveNotificationsExpiring, setReceiveNotificationsExpiring] = useState(false);
+  const [updateTrigger, setUpdateTrigger] = useState(false);
 
-  const [receiveEmailReceipts, setReceiveEmailReceipts] = useState(false);
+  const [notificationSettings, setNotificationSettings] = useState({
+    receiveSMSActive: false,
+    receiveNotificationsActive: false,
+    receiveSMSExpiring: false,
+    receiveNotificationsExpiring: false,
+    receiveEmailReceipts: false,
+    receiveNotificationsMarketing: false,
+    activeParkingHours: 15,
+    expiringSoonHours: 15,
+  });
 
-  const [receiveNotificationsMarketing, setReceiveNotificationsMarketing] = useState(false);
+  useEffect(() => {
+    const fetchNotificationSettings = async () => {
+      try {
+        if (userId && token) {
+          const response = await fetch(`http://192.168.0.64:3000/user/notification-settings/${userId}`, {
+            method: 'GET',
+            headers: {
+              Authorization: `${token}`,
+            },
+          });
 
-  const [activeParkingHours, setActiveParkingHours] = useState(15);
-  const [expiringSoonHours, setExpiringSoonHours] = useState(15);
+          const data = await response.json();
+
+          if (data.status === 'SUCCESS') {
+            setNotificationSettings(data.data.notificationSettings || {});
+          } else {
+            console.error('Failed to fetch notification settings:', data.message);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching notification settings:', error);
+      }
+    };
+
+    fetchNotificationSettings();
+  }, [userId, token]);
+
+  useEffect(() => {
+    // Call the update function whenever notificationSettings change
+    updateNotificationSettings();
+  }, [notificationSettings]);
+
+  const updateNotificationSettings = async () => {
+    try {
+      const response = await fetch(`http://192.168.0.64:3000/user/update-notification-settings/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify({ notificationSettings }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'SUCCESS') {
+        console.log('Notification settings updated successfully:', data.data);
+      } else {
+        console.error('Failed to update notification settings:', data.message);
+      }
+    } catch (error) {
+      console.error('Error updating notification settings:', error);
+    }
+  };
 
   const handleActiveParkingChange = (value) => {
-    setActiveParkingHours(Math.round(value) + 15);
+    setNotificationSettings((prevSettings) => ({
+      ...prevSettings,
+      activeParkingHours: Math.round(value) + 15,
+    }));
+    // Trigger an update
+    setUpdateTrigger((prev) => !prev);
   };
 
   const handleExpiringSoonChange = (value) => {
-    setExpiringSoonHours(Math.round(value) + 15);
+    setNotificationSettings((prevSettings) => ({
+      ...prevSettings,
+      expiringSoonHours: Math.round(value) + 15,
+    }));
+    // Trigger an update
+    setUpdateTrigger((prev) => !prev);
+  };
+
+  const handleSwitchToggle = (settingName) => {
+    setNotificationSettings((prevSettings) => ({
+      ...prevSettings,
+      [settingName]: !prevSettings[settingName],
+    }));
+    // Trigger an update
+    setUpdateTrigger((prev) => !prev);
   };
 
   const formatTime = (minutes) => {
@@ -43,7 +121,7 @@ const NotificationSettings = () => {
             Modtag løbende påmindelser om din igangværende parkering på et selvvalgt tidsinterval.
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {receiveSMSActive || receiveNotificationsActive ? (
+            {notificationSettings.receiveSMSActive || notificationSettings.receiveNotificationsActive ? (
               <>
                 <Slider
                   style={styles.slider}
@@ -52,10 +130,13 @@ const NotificationSettings = () => {
                   minimumTrackTintColor="#025578"
                   maximumTrackTintColor="rgba(0, 0, 0, 0.1)"
                   step={15}
+                  value={notificationSettings.activeParkingHours - 15}
                   onValueChange={handleActiveParkingChange}
                 />
                 <View style={styles.textContainer}>
-                  <Text style={{ textAlign: 'right', color: '#000000' }}>{formatTime(activeParkingHours)}</Text>
+                  <Text style={{ textAlign: 'right', color: '#000000' }}>
+                    {formatTime(notificationSettings.activeParkingHours)}
+                  </Text>
                 </View>
               </>
             ) : null}
@@ -65,8 +146,8 @@ const NotificationSettings = () => {
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveSMSActive}
-              onValueChange={() => setReceiveSMSActive(!receiveSMSActive)}
+              value={notificationSettings.receiveSMSActive}
+              onValueChange={() => handleSwitchToggle('receiveSMSActive')}
             />
           </View>
           <View style={styles.extraView}>
@@ -74,8 +155,8 @@ const NotificationSettings = () => {
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveNotificationsActive}
-              onValueChange={() => setReceiveNotificationsActive(!receiveNotificationsActive)}
+              value={notificationSettings.receiveNotificationsActive}
+              onValueChange={() => handleSwitchToggle('receiveNotificationsActive')}
             />
           </View>
         </View>
@@ -91,7 +172,7 @@ const NotificationSettings = () => {
             parkering.
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {receiveSMSExpiring || receiveNotificationsExpiring ? (
+            {notificationSettings.receiveSMSExpiring || notificationSettings.receiveNotificationsExpiring ? (
               <>
                 <Slider
                   style={styles.slider}
@@ -100,10 +181,13 @@ const NotificationSettings = () => {
                   minimumTrackTintColor="#025578"
                   maximumTrackTintColor="rgba(0, 0, 0, 0.1)"
                   step={15}
+                  value={notificationSettings.expiringSoonHours - 15}
                   onValueChange={handleExpiringSoonChange}
                 />
                 <View style={styles.textContainer}>
-                  <Text style={{ textAlign: 'right', color: '#000000' }}>{formatTime(expiringSoonHours)}</Text>
+                  <Text style={{ textAlign: 'right', color: '#000000' }}>
+                    {formatTime(notificationSettings.expiringSoonHours)}
+                  </Text>
                 </View>
               </>
             ) : null}
@@ -113,8 +197,8 @@ const NotificationSettings = () => {
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveSMSExpiring}
-              onValueChange={() => setReceiveSMSExpiring(!receiveSMSExpiring)}
+              value={notificationSettings.receiveSMSExpiring}
+              onValueChange={() => handleSwitchToggle('receiveSMSExpiring')}
             />
           </View>
           <View style={styles.extraView}>
@@ -122,8 +206,8 @@ const NotificationSettings = () => {
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveNotificationsExpiring}
-              onValueChange={() => setReceiveNotificationsExpiring(!receiveNotificationsExpiring)}
+              value={notificationSettings.receiveNotificationsExpiring}
+              onValueChange={() => handleSwitchToggle('receiveNotificationsExpiring')}
             />
           </View>
         </View>
@@ -143,8 +227,8 @@ const NotificationSettings = () => {
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveEmailReceipts}
-              onValueChange={() => setReceiveEmailReceipts(!receiveEmailReceipts)}
+              value={notificationSettings.receiveEmailReceipts}
+              onValueChange={() => handleSwitchToggle('receiveEmailReceipts')}
             />
           </View>
         </View>
@@ -165,8 +249,8 @@ const NotificationSettings = () => {
             <Switch
               thumbColor={Colors.primary}
               trackColor={{ false: '#767577', true: '#025578' }}
-              value={receiveNotificationsMarketing}
-              onValueChange={() => setReceiveNotificationsMarketing(!receiveNotificationsMarketing)}
+              value={notificationSettings.receiveNotificationsMarketing}
+              onValueChange={() => handleSwitchToggle('receiveNotificationsMarketing')}
             />
           </View>
         </View>
