@@ -66,7 +66,8 @@ export default MenuCards;
 
 const styles = StyleSheet.create({
   cardsContainer: {
-    paddingTop: 16,
+    flex: 1,
+    paddingTop: 35,
   },
   cardContainer: {
     backgroundColor: 'white',

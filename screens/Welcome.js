@@ -4,6 +4,7 @@ import { FontAwesome5, Octicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import MenuCards from './../components/MenuCards';
 import { useNavigation } from '@react-navigation/native';
+import CardsStacked from './../components/CardsStacked';
 
 import { DefaultContainer, StyledButton, ButtonText, Colors, Avatar } from './../components/styles';
 
@@ -68,6 +69,13 @@ const Welcome = () => {
     retrieveAvatar();
   }, [userId, token, userInfo]);
 
+  const [activeTab, setActiveTab] = useState(0); // Initial active tab
+
+  const switchTab = (tabName) => {
+    setActiveTab(tabName);
+    // You can perform additional actions when switching tabs if needed
+  };
+
   return (
     <>
       <StatusBar style="dark" />
@@ -89,6 +97,41 @@ const Welcome = () => {
         </View>
         <MenuCards />
       </DefaultContainer>
+      <View style={styles.innerContainer}>
+        <View style={styles.tabsContainer}>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 0 && styles.activeTab]}
+            onPress={() => {
+              setActiveTab(0);
+            }}
+          >
+            <Text style={[styles.tabText, activeTab === 0 && styles.activeTabText]}>P-tilladelser</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 1 && styles.activeTab]}
+            onPress={() => {
+              setActiveTab(1);
+            }}
+          >
+            <Text style={[styles.tabText, activeTab === 1 && styles.activeTabText]}>Historik</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 2 && styles.activeTab]}
+            onPress={() => {
+              setActiveTab(2);
+            }}
+          >
+            <Text style={[styles.tabText, activeTab === 2 && styles.activeTabText]}>Abonnementer</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.formBackground}>
+          {activeTab === 0 && <CardsStacked />}
+          {activeTab === 1 && <Text>Tab2</Text>}
+          {activeTab === 2 && <Text>Tab3</Text>}
+        </View>
+      </View>
     </>
   );
 };
@@ -98,6 +141,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
+  },
+  innerContainer: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  formBackground: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: primary,
+    padding: 25,
   },
   textContainer: {
     flex: 1,
@@ -131,13 +186,42 @@ const styles = StyleSheet.create({
     color: brand,
   },
   'SubTitle.email': {
-    fontSize: 16,
+    fontSize: 14,
     textAlign: 'left',
     fontWeight: '400',
     color: darkLight,
   },
   Avatar: {
     color: darkLight,
+  },
+  tabsContainer: {
+    flexDirection: 'row',
+    backgroundColor: primary,
+    justifyContent: 'space-around',
+    width: '100%',
+    height: 50,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  tab: {
+    flex: 1,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    borderBottomWidth: 3,
+    borderBottomColor: 'transparent',
+  },
+  activeTab: {
+    borderBottomColor: brand,
+    borderBottomWidth: 3,
+  },
+  tabText: {
+    color: darkLight,
+    textAlign: 'center',
+  },
+  activeTabText: {
+    color: brand,
   },
 });
 
