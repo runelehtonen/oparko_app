@@ -5,7 +5,7 @@ import { Colors } from './../components/styles';
 import { CredentialsContext } from './../components/CredentialsContext'; // Import the authentication context
 
 // Colors
-const { darkLight, primary, tertiary } = Colors;
+const { darkLight, primary, tertiary, brand } = Colors;
 
 const PreferenceSettings = () => {
   const { storedCredentials } = useContext(CredentialsContext);
@@ -73,34 +73,47 @@ const PreferenceSettings = () => {
   };
 
   return (
-    <View style={styles.actions}>
-      <TouchableOpacity>
-        <View style={styles.extraView}>
-          <Ionicons name="moon-outline" size={20} color={darkLight} />
-          <Text style={styles.extraText}>Dark mode </Text>
-          <Switch
-            thumbColor={darkMode ? Colors.primary : '#f4f3f4'}
-            trackColor={{ false: '#767577', true: '#025578' }}
-            value={darkMode}
-            onValueChange={handleDarkModeToggle}
-          />
-        </View>
-      </TouchableOpacity>
-      <View style={styles.line} />
-      <TouchableOpacity>
-        <View style={styles.extraView}>
-          <Ionicons name="globe" size={20} color={darkLight} />
-          <Text style={styles.extraText}>Sprog </Text>
-          <Ionicons name="ios-arrow-forward" size={20} color={darkLight} />
-        </View>
-      </TouchableOpacity>
-    </View>
+    <>
+      <View>
+        <Text style={styles.subTitle}>Mine præferencer</Text>
+      </View>
+      <View style={styles.actions}>
+        <TouchableOpacity>
+          <View style={styles.extraView}>
+            <Ionicons name="moon-outline" size={20} color={darkLight} />
+            <Text style={styles.extraText}>Dark mode </Text>
+            <Switch
+              thumbColor={darkMode ? Colors.primary : '#f4f3f4'}
+              trackColor={{ false: '#767577', true: '#025578' }}
+              value={darkMode}
+              onValueChange={handleDarkModeToggle}
+            />
+          </View>
+        </TouchableOpacity>
+        <View style={styles.line} />
+        <TouchableOpacity>
+          <View style={styles.extraView}>
+            <Ionicons name="globe" size={20} color={darkLight} />
+            <Text style={styles.extraText}>Sprog </Text>
+            <Ionicons name="ios-arrow-forward" size={20} color={darkLight} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
 
 export default PreferenceSettings;
 
 const styles = StyleSheet.create({
+  subTitle: {
+    flex: 1,
+    fontSize: 18,
+    textAlign: 'left',
+    fontWeight: '400',
+    color: brand,
+    marginBottom: 10,
+  },
   extraView: {
     flexDirection: 'row',
     justifyContent: 'space-between',

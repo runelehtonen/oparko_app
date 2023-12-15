@@ -112,6 +112,7 @@ const NotificationSettings = () => {
 
   return (
     <>
+      <Text style={styles.subTitle}>Notifikationsindstillinger</Text>
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardHeaderText}>Aktiv Parkering</Text>
@@ -262,6 +263,14 @@ const NotificationSettings = () => {
 export default NotificationSettings;
 
 const styles = StyleSheet.create({
+  subTitle: {
+    flex: 1,
+    fontSize: 18,
+    textAlign: 'left',
+    fontWeight: '400',
+    color: brand,
+    marginBottom: 10,
+  },
   card: {
     backgroundColor: primary,
     borderRadius: 20,
