@@ -44,7 +44,7 @@ const Welcome = () => {
     const fetchUserInfo = async () => {
       if (userId && token) {
         try {
-          const response = await fetch(`http://192.168.0.64:3000/user/profile/${userId}`, {
+          const response = await fetch(`https://login-server-9jcr.onrender.com/user/profile/${userId}`, {
             method: 'GET',
             headers: {
               Authorization: `${token}`,

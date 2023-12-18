@@ -18,7 +18,7 @@ const PreferenceSettings = () => {
     const fetchPreferences = async () => {
       try {
         if (userId && token) {
-          const response = await fetch(`http://192.168.0.64:3000/user/preference-settings/${userId}`, {
+          const response = await fetch(`https://login-server-9jcr.onrender.com/user/preference-settings/${userId}`, {
             method: 'GET',
             headers: {
               Authorization: `${token}`,
@@ -44,7 +44,7 @@ const PreferenceSettings = () => {
 
   const updatePreferenceSettings = async (newDarkMode) => {
     try {
-      const response = await fetch(`http://192.168.0.64:3000/user/update-preference-settings/${userId}`, {
+      const response = await fetch(`https://login-server-9jcr.onrender.com/user/update-preference-settings/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

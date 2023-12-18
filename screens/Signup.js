@@ -81,7 +81,7 @@ const Signup = ({ navigation }) => {
     handleMessage(null);
     setLoading(true);
 
-    const url = 'http://192.168.0.64:3000/user/signup';
+    const url = 'https://login-server-9jcr.onrender.com/user/signup';
 
     axios
       .post(url, credentials)

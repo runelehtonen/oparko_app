@@ -28,7 +28,7 @@ const NotificationSettings = () => {
     const fetchNotificationSettings = async () => {
       try {
         if (userId && token) {
-          const response = await fetch(`http://192.168.0.64:3000/user/notification-settings/${userId}`, {
+          const response = await fetch(`https://login-server-9jcr.onrender.com/user/notification-settings/${userId}`, {
             method: 'GET',
             headers: {
               Authorization: `${token}`,
@@ -58,14 +58,17 @@ const NotificationSettings = () => {
 
   const updateNotificationSettings = async () => {
     try {
-      const response = await fetch(`http://192.168.0.64:3000/user/update-notification-settings/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${token}`,
+      const response = await fetch(
+        `https://login-server-9jcr.onrender.com/user/update-notification-settings/${userId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({ notificationSettings }),
         },
-        body: JSON.stringify({ notificationSettings }),
-      });
+      );
 
       const data = await response.json();
 
