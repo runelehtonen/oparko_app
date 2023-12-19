@@ -25,7 +25,6 @@ const Settings = () => {
   const [avatar, setAvatar] = useState(null);
 
   useEffect(() => {
-    // Retrieve avatar from AsyncStorage on component mount
     retrieveAvatar();
     // Request permission to access the camera roll
     (async () => {
@@ -36,7 +35,6 @@ const Settings = () => {
     })();
   }, []);
 
-  // Function to open the image picker
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -45,14 +43,11 @@ const Settings = () => {
       quality: 1,
     });
 
-    // Check if the image selection was canceled
     if (result.canceled !== true) {
-      // Use the "assets" array to access selected assets
       const selectedImage = result.assets && result.assets.length > 0 ? result.assets[0] : null;
 
       if (selectedImage) {
         setAvatar(selectedImage.uri);
-        // Save the avatar URI to AsyncStorage
         saveAvatar(selectedImage.uri);
       }
     }
@@ -77,7 +72,6 @@ const Settings = () => {
     }
   };
 
-  // Function to retrieve avatar URI from AsyncStorage
   const retrieveAvatar = async () => {
     try {
       const storedAvatar = await AsyncStorage.getItem('avatar');

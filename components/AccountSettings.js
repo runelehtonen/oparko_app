@@ -98,7 +98,7 @@ const AccountSettings = () => {
 
             console.log('Updated UserInfo:', userInfo);
           } else {
-            // Handle error, maybe user not found or unauthorized
+            // TODO Error handling
           }
         } catch (error) {
           console.error('Error fetching user information:', error);
@@ -129,9 +129,8 @@ const AccountSettings = () => {
     try {
       await AsyncStorage.removeItem('oparkoAppToken');
       await AsyncStorage.removeItem('oparkoAppUser');
-      // Add any other items you want to remove
 
-      setStoredCredentials(null); // Clear stored credentials in the state
+      setStoredCredentials(null);
     } catch (error) {
       console.log(error);
     }
@@ -149,7 +148,7 @@ const AccountSettings = () => {
 
       if (result.status === 'SUCCESS') {
         console.log('User information updated successfully:', result.data);
-        setUserInfo(result.data); // Update local state with the updated user information
+        setUserInfo(result.data);
         handleMessage(result.message, 'SUCCESS');
       } else {
         console.error('Failed to update user information:', result.message);
@@ -164,7 +163,6 @@ const AccountSettings = () => {
   };
 
   const handleDeleteUser = () => {
-    // Display an alert for confirmation
     Alert.alert(
       'Are you sure?',
       'This action will permanently delete your user. Do you want to proceed?',
@@ -195,11 +193,9 @@ const AccountSettings = () => {
       if (result.status === 'SUCCESS') {
         console.log('User deleted successfully:', result.message);
 
-        // Log out the user
         await clearLogin();
 
-        // Navigate to the start of the application (adjust the navigation logic as needed)
-        navigation.navigate('Start'); // replace 'Start' with the actual starting point of your app
+        navigation.navigate('Start');
       } else {
         console.error('Failed to delete user:', result.message);
       }
@@ -230,12 +226,10 @@ const AccountSettings = () => {
         setMessage(result.message);
         setMessageType('SUCCESS');
 
-        // Clear password fields
         setCurrentPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
 
-        // Close the modal after 1 second
         setTimeout(() => {
           setShowPasswordModal(false);
         }, 1000);
@@ -255,7 +249,6 @@ const AccountSettings = () => {
     let timeout;
 
     if (message && messageType) {
-      // Auto-hide message after 5 seconds
       timeout = setTimeout(() => {
         setMessage(null);
         setMessageType(null);

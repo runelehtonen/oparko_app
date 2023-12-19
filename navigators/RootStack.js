@@ -3,7 +3,6 @@ import React from 'react';
 import { Colors } from './../components/styles';
 const { primary, tertiary } = Colors;
 
-// React Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -21,7 +20,6 @@ import Settings from '../screens/Settings';
 
 const Stack = createNativeStackNavigator();
 
-// credentials context
 import { CredentialsContext } from './../components/CredentialsContext';
 
 const RootStack = () => {

@@ -1,12 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
-
-// formik
 import { Formik } from 'formik';
-
-// icons
 import { Octicons, Ionicons, Fontisto } from '@expo/vector-icons';
-
 import {
   StyledContainer,
   InnerContainer,
@@ -31,39 +26,23 @@ import {
   FormBackground,
 } from './../components/styles';
 import { View, TouchableOpacity, Modal, Text, ActivityIndicator } from 'react-native';
-
-// Colors
-const { brand, darkLight, primary, lightGray } = Colors;
-
-// Datepicker
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-// Keyboard avoiding view
 import KeyboardAvoidingWrapper from './../components/KeyboardAvoidingWrapper';
-
-// API client
 import axios from 'axios';
-
-// async storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// credentials context
 import { CredentialsContext } from './../components/CredentialsContext';
+
+const { brand, darkLight, primary, lightGray } = Colors;
 
 const Signup = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
   const [show, setShow] = useState(false);
   const [date, setDate] = useState(new Date(2000, 0, 1));
   const [loading, setLoading] = useState(false);
-
-  // Message
   const [message, setMessage] = useState();
   const [messageType, setMessageType] = useState();
-
-  // Actual date of birth to be sent
   const [dob, setDob] = useState();
 
-  // credentials context
   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
 
   const onChange = (event, selectedDate) => {
@@ -92,17 +71,14 @@ const Signup = ({ navigation }) => {
         if (status !== 'SUCCESS') {
           handleMessage(message, status);
         } else {
-          // Update here to handle the token and user details
           const { token, user } = data;
 
           console.log('User Data:', data);
 
-          // Store the token and user details in AsyncStorage
           AsyncStorage.setItem('oparkoAppToken', token);
           AsyncStorage.setItem('oparkoAppUser', JSON.stringify(user));
 
-          // Update storedCredentials to include user information
-          setStoredCredentials({ token, userId: user.userId }); // Set userId in credentials
+          setStoredCredentials({ token, userId: user.userId });
           navigation.navigate('Welcome');
         }
 
@@ -139,7 +115,6 @@ const Signup = ({ navigation }) => {
       <StyledContainer>
         <StatusBar style="dark" />
         <InnerContainer>
-          {/* <PageLogo resizeMode="cover" source={require('./../assets/img/Oparko_Logo_Pos.png')} /> */}
           <FormBackground>
             <PageTitle>Opret bruger</PageTitle>
 

@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Image, useWindowDimensions } from 'react-native
 
 import { Colors } from './../components/styles';
 
-// Colors
 const { brand } = Colors;
 
 export default OnboardingItem = ({ item }) => {

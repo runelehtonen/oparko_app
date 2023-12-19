@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 
 import { StyledButton, ButtonText, Colors, MsgBox, DefaultContainer } from './../components/styles';
 
-// Colors
 const { brand, primary, red, bg } = Colors;
 
 const Start = () => {
@@ -33,9 +32,6 @@ const Start = () => {
             source={require('./../assets/img/Parking_Lot.png')}
           />
         </View>
-        {/* <View style={styles.notificationMessageContainer}>
-          <Text style={styles.notificationMessage}>Vi oplever i øjeblikket problemer med Login</Text>
-        </View> */}
       </DefaultContainer>
       <View style={styles.buttonContainer}>
         <StyledButton onPress={goToLogin}>

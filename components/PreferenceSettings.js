@@ -2,9 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, TouchableOpacity, Switch, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './../components/styles';
-import { CredentialsContext } from './../components/CredentialsContext'; // Import the authentication context
+import { CredentialsContext } from './../components/CredentialsContext';
 
-// Colors
 const { darkLight, primary, tertiary, brand } = Colors;
 
 const PreferenceSettings = () => {
@@ -12,7 +11,7 @@ const PreferenceSettings = () => {
   const { userId, token } = storedCredentials;
 
   const [darkMode, setDarkMode] = useState(false);
-  const [language, setLanguage] = useState(''); // Set the initial language value
+  const [language, setLanguage] = useState('');
 
   useEffect(() => {
     const fetchPreferences = async () => {

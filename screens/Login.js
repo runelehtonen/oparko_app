@@ -1,12 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-
-// formik
 import { Formik } from 'formik';
-
-// icons
 import { Octicons, Ionicons, Fontisto } from '@expo/vector-icons';
-
 import {
   StyledContainer,
   InnerContainer,
@@ -32,25 +27,14 @@ import {
   CarImg,
 } from './../components/styles';
 import { View, ActivityIndicator } from 'react-native';
-
-// Colors
-const { lightGray, darkLight, primary } = Colors;
-
-// Keyboard avoiding view
 import KeyboardAvoidingWrapper from './../components/KeyboardAvoidingWrapper';
-
-// API client
 import axios from 'axios';
-
 import * as Google from 'expo-google-app-auth';
-
-// async storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// credentials context
 import { CredentialsContext } from './../components/CredentialsContext';
-
 import { useNavigation } from '@react-navigation/native';
+
+const { lightGray, darkLight, primary } = Colors;
 
 const Login = () => {
   const navigation = useNavigation();
@@ -79,12 +63,12 @@ const Login = () => {
         } else {
           const { token, user } = data;
 
-          console.log('User Data:', data); // Log the entire user data
+          console.log('User Data:', data);
 
           AsyncStorage.setItem('oparkoAppToken', token);
           AsyncStorage.setItem('oparkoAppUser', JSON.stringify(user));
 
-          setStoredCredentials({ token, userId: user.userId }); // Set userId in credentials
+          setStoredCredentials({ token, userId: user.userId });
           navigation.navigate('Welcome');
         }
 
@@ -150,7 +134,6 @@ const Login = () => {
           <CarImg resizeMode="cover" source={require('./../assets/img/car.png')} />
           <FormBackground>
             <PageTitle>Log ind</PageTitle>
-            {/* <SubTitle>Subtitle</SubTitle> */}
 
             <Formik
               initialValues={{ email: '', password: '' }}

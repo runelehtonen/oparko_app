@@ -5,7 +5,6 @@ import { AntDesign } from '@expo/vector-icons';
 
 import { Colors } from './../components/styles';
 
-// Colors
 const { brand } = Colors;
 
 export default OnboardingButton = ({ percentage, scrollTo }) => {

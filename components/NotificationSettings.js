@@ -2,9 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, Text, Switch } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Colors } from './../components/styles';
-import { CredentialsContext } from './../components/CredentialsContext'; // Import the authentication context
+import { CredentialsContext } from './../components/CredentialsContext';
 
-// Colors
 const { primary, brand, tertiary, darkLight } = Colors;
 
 const NotificationSettings = () => {
@@ -217,7 +216,7 @@ const NotificationSettings = () => {
         </View>
       </View>
 
-      {/* New Card for "Kvitteringer" */}
+      {/* Kvitteringer */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardHeaderText}>Kvitteringer</Text>

@@ -14,20 +14,16 @@ import {
   ButtonText,
 } from '../components/styles';
 
-// Colors
 const { brand, primary } = Colors;
 
-// Icon
 import { Octicons, Ionicons } from '@expo/vector-icons';
 
-// Resend timer
 import ResendTimer from './../components/ResendTimer';
 
 const Verification = () => {
   const [resendingEmail, setResendingEmail] = useState(false);
   const [resendStatus, setResendStatus] = useState(' Send igen');
 
-  // resend timer
   const [timeLeft, setTimeLeft] = useState(null);
   const [targetTime, setTargetTime] = useState(null);
 

@@ -8,7 +8,6 @@ const BuyPermit = () => {
       <Text style={styles.underDev}>404</Text>
       <Text style={styles.pageTitle}>Køb parkeringstilladelse</Text>
       <Text style={styles.text}>er i øjeblikket under udvikling</Text>
-      {/* Add your UI components here */}
     </View>
   );
 };

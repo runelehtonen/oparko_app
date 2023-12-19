@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
-// splash screen
 import * as SplashScreen from 'expo-splash-screen';
-
-// React Navigation stack
 import RootStack from './navigators/RootStack';
-
-// async storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// credentials context
 import { CredentialsContext } from './components/CredentialsContext';
 
 export default function App() {
@@ -33,7 +25,6 @@ export default function App() {
         const isLoggedIn = await checkLoginCredentials();
 
         if (isLoggedIn) {
-          // User is already logged in, retrieve credentials and set them
           const storedToken = await AsyncStorage.getItem('oparkoAppToken');
           const storedUserString = await AsyncStorage.getItem('oparkoAppUser');
           const storedUser = JSON.parse(storedUserString);
@@ -52,7 +43,7 @@ export default function App() {
   }, []);
 
   if (!appReady) {
-    return null; // You can return a loading indicator or any other UI element here
+    return null; // TODO add a loading indicator
   }
 
   return (

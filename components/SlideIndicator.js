@@ -3,7 +3,6 @@ import { View, StyleSheet, Animated, useWindowDimensions } from 'react-native';
 
 import { Colors } from './../components/styles';
 
-// Colors
 const { brand } = Colors;
 
 export default SlideIndicator = ({ data, scrollX }) => {

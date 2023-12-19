@@ -5,20 +5,13 @@ import { StatusBar } from 'expo-status-bar';
 import MenuCards from './../components/MenuCards';
 import { useNavigation } from '@react-navigation/native';
 import CardsStacked from './../components/CardsStacked';
-
 import { DefaultContainer, StyledButton, ButtonText, Colors, Avatar } from './../components/styles';
-
-// async storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// credentials context
 import { CredentialsContext } from './../components/CredentialsContext';
 
-// Colors
 const { brand, darkLight, light, secondary, primary } = Colors;
 
 const Welcome = () => {
-  // credentials context
   const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
   const { userId, token } = storedCredentials;
   const navigation = useNavigation();
@@ -56,7 +49,7 @@ const Welcome = () => {
           if (result.status === 'SUCCESS') {
             setUserInfo(result.data);
           } else {
-            // Handle error, maybe user not found or unauthorized
+            // TODO errorhandling, maybe user not found or unauthorized
           }
         } catch (error) {
           console.error('Error fetching user information:', error);
@@ -69,11 +62,10 @@ const Welcome = () => {
     retrieveAvatar();
   }, [userId, token, userInfo]);
 
-  const [activeTab, setActiveTab] = useState(0); // Initial active tab
+  const [activeTab, setActiveTab] = useState(0);
 
   const switchTab = (tabName) => {
     setActiveTab(tabName);
-    // You can perform additional actions when switching tabs if needed
   };
 
   return (
