@@ -66,7 +66,7 @@ const Login = () => {
     handleMessage(null);
     setLoading(true);
 
-    const url = 'http://192.168.0.64:3000/user/signin';
+    const url = 'https://login-server-9jcr.onrender.com/user/signin';
 
     axios
       .post(url, credentials)

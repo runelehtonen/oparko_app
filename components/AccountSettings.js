@@ -72,7 +72,7 @@ const AccountSettings = () => {
     const fetchUserInfo = async () => {
       if (userId && token) {
         try {
-          const response = await fetch(`http://192.168.0.64:3000/user/profile/${userId}`, {
+          const response = await fetch(`https://login-server-9jcr.onrender.com/user/profile/${userId}`, {
             method: 'GET',
             headers: {
               Authorization: `${token}`,
@@ -139,7 +139,7 @@ const AccountSettings = () => {
 
   const handleUpdate = async (values, setSubmitting) => {
     try {
-      const response = await axios.put(`http://192.168.0.64:3000/user/update/${userId}`, values, {
+      const response = await axios.put(`https://login-server-9jcr.onrender.com/user/update/${userId}`, values, {
         headers: {
           Authorization: `${token}`,
         },
@@ -184,7 +184,7 @@ const AccountSettings = () => {
 
   const confirmDeleteUser = async () => {
     try {
-      const response = await axios.delete(`http://192.168.0.64:3000/user/delete/${userId}`, {
+      const response = await axios.delete(`https://login-server-9jcr.onrender.com/user/delete/${userId}`, {
         headers: {
           Authorization: `${token}`,
         },
@@ -211,7 +211,7 @@ const AccountSettings = () => {
   const handleChangePassword = async () => {
     try {
       const response = await axios.post(
-        'http://192.168.0.64:3000/user/change-password',
+        'https://login-server-9jcr.onrender.com/user/change-password',
         {
           currentPassword,
           newPassword,
