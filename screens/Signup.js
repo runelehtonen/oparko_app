@@ -79,7 +79,7 @@ const Signup = ({ navigation }) => {
           AsyncStorage.setItem('oparkoAppUser', JSON.stringify(user));
 
           setStoredCredentials({ token, userId: user.userId });
-          navigation.navigate('Welcome');
+          navigation.navigate('Verification');
         }
 
         setSubmitting(false);

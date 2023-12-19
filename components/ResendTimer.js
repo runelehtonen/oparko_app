@@ -10,7 +10,7 @@ const ResendTimer = ({ activeResend, resendEmail, resendingEmail, resendStatus, 
         <InfoText>Har du ikke modtaget en email?</InfoText>
 
         {!resendingEmail && (
-          <TextLink style={{ opacity: !activeResend && 0.5 }} disabled={!activeResend} onPress={resendEmail}>
+          <TextLink style={{ opacity: !activeResend && 0.2 }} disabled={!activeResend} onPress={resendEmail}>
             <TextLinkContent resendStatus={resendStatus} style={{ textDecorationLine: 'underline' }}>
               {resendStatus}
             </TextLinkContent>

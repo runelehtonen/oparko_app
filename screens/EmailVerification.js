@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { useNavigation } from '@react-navigation/native';
 
 import {
   DefaultContainer,
@@ -56,6 +57,8 @@ const Verification = () => {
     };
   }, []);
 
+  const navigation = useNavigation();
+
   const resendEmail = () => {};
 
   return (
@@ -70,11 +73,14 @@ const Verification = () => {
         <PageTitle>Verificer din email</PageTitle>
         <InfoText>
           Bekræft din email ved at klikke på linket i den email vi har sendt til
-          <EmphasizeText> {`test.eksempel@email.com`}</EmphasizeText>
+          <EmphasizeText> {`tryk.fortsæt@email.com`}</EmphasizeText>
         </InfoText>
 
-        <StyledButton onPress={() => {}} style={{ backgroundColor: brand, flexDirection: 'row' }}>
-          <ButtonText>Proceed </ButtonText>
+        <StyledButton
+          onPress={() => navigation.navigate('Welcome')}
+          style={{ backgroundColor: brand, flexDirection: 'row' }}
+        >
+          <ButtonText>Fortsæt </ButtonText>
           <Ionicons name="md-arrow-forward" size={25} color={primary} />
         </StyledButton>
         <ResendTimer

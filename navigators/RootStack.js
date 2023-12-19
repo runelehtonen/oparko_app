@@ -44,6 +44,7 @@ const RootStack = () => {
             {storedCredentials ? (
               <>
                 <Stack.Screen name="Welcome" component={Welcome} options={{ headerTintColor: primary }} />
+                <Stack.Screen name="Verification" component={Verification} />
                 <Stack.Screen name="BuyPermit" component={BuyPermit} />
                 <Stack.Screen name="Subscriptions" component={Subscriptions} />
                 <Stack.Screen name="Support" component={Support} />
@@ -53,7 +54,6 @@ const RootStack = () => {
               <>
                 <Stack.Screen name="Start" component={Start} />
                 <Stack.Screen name="Onboarding" component={Onboarding} />
-                <Stack.Screen name="Verification" component={Verification} />
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Signup" component={Signup} />
               </>
