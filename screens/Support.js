@@ -5,7 +5,9 @@ import { StyleSheet, View, Text } from 'react-native';
 const Support = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Support Screen</Text>
+      <Text style={styles.underDev}>404</Text>
+      <Text style={styles.pageTitle}>Support</Text>
+      <Text style={styles.text}>er i øjeblikket under udvikling</Text>
       {/* Add your UI components here */}
     </View>
   );
@@ -17,9 +19,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  underDev: {
+    fontSize: 50,
+  },
+  pageTitle: {
+    fontSize: 30,
+    color: '#025578',
+    marginTop: 10,
+  },
   text: {
     fontSize: 20,
-    fontWeight: 'bold',
+    maxWidth: '80%',
+    textAlign: 'center',
   },
 });
 

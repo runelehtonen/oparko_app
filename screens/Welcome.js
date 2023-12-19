@@ -128,8 +128,20 @@ const Welcome = () => {
         </View>
         <View style={styles.formBackground}>
           {activeTab === 0 && <CardsStacked />}
-          {activeTab === 1 && <Text>Tab2</Text>}
-          {activeTab === 2 && <Text>Tab3</Text>}
+          {activeTab === 1 && (
+            <View>
+              <Text style={{ textAlign: 'center', fontSize: 36 }}>404</Text>
+              <Text style={{ textAlign: 'center', color: '#025578', fontSize: 22 }}>Historik</Text>
+              <Text style={{ textAlign: 'center' }}>er i øjeblikket under udvikling</Text>
+            </View>
+          )}
+          {activeTab === 2 && (
+            <View>
+              <Text style={{ textAlign: 'center', fontSize: 36 }}>404</Text>
+              <Text style={{ textAlign: 'center', color: '#025578', fontSize: 22 }}>Abonnementer</Text>
+              <Text style={{ textAlign: 'center' }}>er i øjeblikket under udvikling</Text>
+            </View>
+          )}
         </View>
       </View>
     </>
